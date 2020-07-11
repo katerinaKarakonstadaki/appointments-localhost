@@ -1,0 +1,24 @@
+
+{% extends "dashboard.html" %}
+   {% block title %}
+     ContactUs
+    {% endblock %}
+
+{% block styles %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{% endblock %}
+   
+     
+      {% block content %}
+      <header id="page_header">
+         <h2>  Book Appointments the easy way! </h2>
+      </header>
+      <p> Schedule your appointments faster and avoid back and forth </p>
+      <p>email correspondence simply by handling over the power to book </p>
+      <p> organisations directly</p>
+     
+      {% endblock %}
+   </body>
+</html>

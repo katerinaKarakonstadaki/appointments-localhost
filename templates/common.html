@@ -1,0 +1,20 @@
+{% macro detail(appt, link_title=false, show_edit=true, show_description=true) %}
+
+<div class="appointment-detail">
+    
+      <h3>{{ appt.title or '(untitled)' }}</h3>
+   
+    {% if appt.location %}<p><i class="icon-home"></i> {{ appt.location }}</p>{% endif %}
+    
+    
+    
+    {% if show_description and appt.description %}
+      <div class="row">
+        <p class="span5">
+          {{ appt.description }}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+{% endmacro %}

@@ -1,0 +1,154 @@
+
+h1{
+  margin: 30px auto;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  text-align: center;
+  width: 960px;
+}
+
+h2 {
+  margin: 30px auto;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  text-align: center;
+  width: 960px;
+}
+
+
+h3 {
+  margin: 30px auto;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  text-align: center;
+  width: 960px;
+}
+h4 {
+  margin: 30px auto;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  text-align: left;
+  width: 960px;
+}
+
+p{ margin: 0 0 20px 1;
+font-family: Arial, "MS Trebuchet", sans-serif;
+   text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #218C8D;
+    
+    
+  }
+  
+  li {
+    float: left;
+  }
+
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+    
+  }
+
+  input[type=submit] {
+  background-color: 		#41AAC4;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid black;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid black;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+th {
+  background-color: #41AAC4;
+  color: white;
+}
+
+
+ /* Extra styles for the cancel button */
+ .cancelbtn {
+  padding: 14px 20px;
+  background-color: #f44336;
+}
+/* Float cancel and signup buttons and add an equal width */
+.cancelbtn, .signupbtn {
+  float: left;
+  width: 50%;
+}
+ 
+input[type=text]  {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  resize: vertical;
+}
+
+
+
+input[type=date]  {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  resize: vertical;
+}
+
+
+
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+  
+  li a:hover {
+    background-color: #111111;
+   
+  }
+
+  .formwrapper {
+    border-radius: 5px;
+    background-color: #EF7126;
+    padding: 20px;
+  }
+
+ footer#footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #EF7126;
+    color: white;
+    text-align: center;
+ }
+
+
+

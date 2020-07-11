@@ -1,0 +1,23 @@
+
+{% block styles %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<!-- Write your comments here -->
+
+{% endblock %}
+
+<div class="container-fluid" style="min-height:100%">
+    {% with messages = get_flashed_messages() %} 
+      {% if messages %} 
+        {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button> 
+          {{message}}
+        </div>
+        {% endfor %} 
+      {% endif %} 
+    {% endwith %}
+  </div>

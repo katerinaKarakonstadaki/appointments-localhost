@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: flask-middleware-jwt
+Version: 1.3
+Summary: This is a middleware for jwt
+Home-page: https://github.com/keyloguer/flask_middleware
+Author: Daniel Pereira Zitei, Carla de Almeida Madureira
+Author-email: daniel.zitei@gmail.com, carla.almadureira@gmail.com
+License: Apache License, Version 2.0
+Description: UNKNOWN
+Platform: UNKNOWN

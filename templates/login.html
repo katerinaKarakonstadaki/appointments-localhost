@@ -1,0 +1,56 @@
+{% extends "dashboard.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block title %}
+  Login 
+ {% endblock %}
+
+ {% block styles %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<!-- Write your comments here -->
+
+{% endblock %}
+
+
+   {% block content %}
+
+   <h3>Login to </h3 >
+
+<div class="container">
+<form action = "http://localhost:5000/api/login/" method = "POST">
+
+    {{ form.hidden_tag() }}
+    
+    
+        
+        {{ wtf.form_field(form.username) }}
+  
+   <br> 
+    
+<br>
+      
+    
+        {{ wtf.form_field(form.password) }}
+        
+        
+        <br><br>
+        
+      <div class="submit-button">
+        {{ form.submit }} <br>
+      </div> <br>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+      </form>
+  </div>
+  
+      
+  
+
+      
+
+
+   {% endblock %}

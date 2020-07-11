@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>Flask Parent Template</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+   </head>
+   <body>
+      <header>
+         <div class="container">
+            <h1 class="logo"> Instant Appointment Co.</h1>
+            <strong>
+               <div class="formwrapper">
+                    
+          
+                     
+
+                  <form action="http://localhost:5000/api/approve/" method="POST">
+                    
+
+                    
+                     
+                     <table>
+                        <thead>
+                        <tr>
+                            <td>select</td>
+                            <th>username</th>
+                            <th>email</th>
+                            <th>start</th>
+                            <th>time</th>
+                            <th>location</th>
+                            <th>Approved</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %} 
+                                <tr>
+                                    <td><input type="checkbox" name="check" id="inlineCheckbox1" value="{{row[1]}}">
+                                    <td>{{row[0]}}</td>
+                                    <td>{{row[1]}}</td>
+                                    <td>{{row[2]}}</td>
+                                    <td>{{row[3]}}</td>
+                                    <td>{{row[4]}}</td>
+                                    <td>{{row[5]}}</td>
+                                </tr>
+                            {% endfor %}       
+                        </tbody>
+                    </table>                  
+                    <br>
+                    <br>
+                    <br>
+                     <br>
+                     <button type="submit" name="submit-button" value="Submit">Accept</button>
+                   </form>
+
+                  </div>   
+
+
+
+            </strong>
+         </div>
+      </header>
+      
+      {% block content %}
+      {% endblock %}
+   </body>
+   <footer id="footer">
+    <p> Copyright &copy; 2020 Booking Co.</p>
+   
+    </footer>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
