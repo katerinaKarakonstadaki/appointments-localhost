@@ -166,14 +166,14 @@ def register():
 #@login_required
 def login():
     form = LoginForm(request.form)
-    user=User.query.filter_by(username = form.username.data).first()
-    
-    if user and check_password_hash(user.password, form.password.data):
-        login_user(user,remember= form.remember.data)
-        return redirect("http://localhost:5001/api/menu")
+    if form.validate_on_submit():
+        user=User.query.filter_by(username = form.username.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user,remember= form.remember.data)
+            return redirect("http://localhost:5001/api/menu")
         #redirect(url_for('profile'))
-    else:
-        flash('Login failed!- Please check password')
+        else:
+            flash('Login failed!- Please check password')
 
         
     return render_template('login.html', form=form)
