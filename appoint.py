@@ -178,6 +178,7 @@ def get_user(ident):
 @app.route('/api/menu/')
 def menu():
     return render_template('application.html')
+    
 
 @app.route('/api/add/', methods=['GET','POST'])
 def appointment_create():
