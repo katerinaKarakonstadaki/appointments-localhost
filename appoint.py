@@ -12,7 +12,8 @@ from flask_sqlalchemy  import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore,current_user,login_required, UserMixin,RoleMixin
 from flask_security.utils import hash_password
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_user import UserMixin
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import jsonify
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, TimeField
@@ -23,6 +24,7 @@ from flask_mail import Message
 from datetime import datetime, timedelta
 from functools import wraps
 import http.client
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_user import roles_required, login_required
 from flask import abort
 from flask_restplus import Namespace, Resource, fields
@@ -51,34 +53,22 @@ class Configuration(object):
   PUBLIC_KEY = 'Thisisapublickey'
   PRIVATE_KEY= 'Thisisaprivatekey'
   SQLALCHEMY_TRACK_MODIFICATIONS = False
-  MAIL_SERVER='smtp.gmail.com'
-  MAIL_PORT= 465
-  #MAIL_USERNAME = '2epal@gmail.com' 
-  #MAIL_PASSWORD = '*****'
-  MAIL_USE_TLS = False
-  MAIL_USE_SSL = True
-  #SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/db.sqlite3' % APPLICATION_DIR  
   SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://appuser:123@localhost/appdb'
-#app.config['SECURITY_PASSWORD_HASH'] =  "bcrypt"
+  POSTGRES_SERVER='localhost'
 
 app = Flask(__name__)
 app.config.from_object(Configuration)
+
 app.config['SECRET_KEY']= 'Thisisasecretkey'
 private_key= 'Thisisaprivatekey'
 public_key = 'Thisisapublickey'
 app.config['SQLALCHEMY_DATABASE_URI']='postgresql+psycopg2://appuser:123@localhost/appdb'
-app.config['MAIL_SERVER']= 'linux110.papaki.gr'
-app.config['MAIL_PORT']=587
-app.config['MAIL_USE_SSL']=False
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_DEBUG']=True
-app.config['MAIL_USERNAME']='info@public-services.site'
-app.config['MAIL_PASSWORD']='pas!!123'
+app.config['POSTGRES_SERVER']='localhost'
 
 # use values from our configuration project
 db=SQLAlchemy(app) #instruct SQLAlchemy how to interact with our database
 
-#import sqlite3
+
 import psycopg2
 
 login_manager = LoginManager()
@@ -86,8 +76,7 @@ login_manager.init_app(app)
 
 bootstrap = Bootstrap(app)
 
-#security = Security()
-#security.init_app(app)
+
 
 
 roles_users = db.Table('role_users',
@@ -138,10 +127,8 @@ class Appointment(db.Model):
     __tablename__ = 'appointment'
  
     id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime) #, default=datetime.now)
-    modified = db.Column(db.DateTime) #, default=datetime.now, onupdate=datetime.now)
-    #user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    #user = db.relationship(User, lazy='joined', join_depth=1, viewonly=True)
+    created = db.Column(db.DateTime) 
+    modified = db.Column(db.DateTime) 
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
     start = db.Column(db.DateTime)
@@ -154,29 +141,26 @@ class AppointmentForm(FlaskForm):
     username = StringField('Username', [Length(max=255)])
     email =StringField('Email', [Length(max=255)])
     start =DateField('Start')
-    #start = DateTimeField('Start','%Y-%m-%d %H:%M:%S')
     time=StringField('Time')
-    location = StringField('Location', [Length(max=255)])
-    
+    location = StringField('Location', [Length(max=255)]) 
 
 
 
 db.create_all()
 
-#@app.before_request
-#def create_user():
-    #user_datastore.add_role_to_user('jenny@mail.com', 'citizen')
-    #user_datastore.find_or_create_role(name='employee', description='Employee')
-    #user_datastore.find_or_create_role(name='citizen', description='Citizen')
-    #user_datastore.find_or_create_role(name='admin', description='Administrator')
-    #db.session.commit()
+
 
 @login_manager.user_loader
 def get_user(ident):
     return User.query.get(int(ident))
 
-@app.route('/api/menu/')
+@app.route('/api/menu/', methods=['GET','POST'])
 def menu():
+    content = request.json
+    print('content',content['user'])
+    user=User.query.filter_by(username = content['user']).first()
+    login_user(user)
+    print('current_user',current_user)
     return render_template('application.html')
     
 
@@ -205,21 +189,14 @@ def appointment_create():
 
 
 @app.route('/api/approve/',  methods=['GET','POST'])
-#@roles_required('employee')
 def approve_appointment():
+    print('user=',current_user)
     if current_user.has_roles('citizen'):
-        print('hello1')
-        flash('You are not allowed')
+        flash('You are not allowed!')
         return render_template('flash.html')
-        return redirect(url_for('menu'))
-    else:
-        
-        conn = psycopg2.connect("dbname='appdb' user='appuser' host='localhost' password='123'")
-    #conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI']=postgresql+psycopg2://appuser:123@localhost/appdb)
-    #except:
-    #    print("I am unable to connect to the database")
-
-    #conn = sqlite3.connect('db.sqlite3')
+        # return redirect(url_for(''))
+    else:        
+        conn = psycopg2.connect(dbname="appdb", user="appuser", host=app.config['POSTGRES_SERVER'], password="123")
         c = conn.cursor()
         c.execute("SELECT username,email,start,time,location, approved FROM appointment where approved=False")
         data = c.fetchall()
@@ -230,11 +207,9 @@ def approve_appointment():
                     sql_query = """UPDATE appointment SET approved=True where email=%s"""
                     c.execute(sql_query,(checkbox,))
                     conn.commit()
-                    #count=c.rowcount
-                    res = requests.post('http://127.0.0.1:5002/api/notify/', json={"email":checkbox})
-                #redirect("http://127.0.0.1:5001/api/notify/<email>",checkbox)
+                    res = requests.post('http://127.0.0.1:5002/api/notify/', json={"email":checkbox})               
     return render_template('approve.html', data=data)
-   # return ('',204)
+   
 
 
 

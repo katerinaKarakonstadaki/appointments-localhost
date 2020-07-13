@@ -1,5 +1,6 @@
 import sys
 from flask import Flask
+import requests
 from flask import session
 from flask_sqlalchemy  import SQLAlchemy
 from flask import Flask, render_template, redirect, url_for, request, make_response, g
@@ -45,9 +46,8 @@ class Configuration(object):
   SECRET_KEY= 'Thisisasecretkey'
   PUBLIC_KEY = 'Thisisapublickey'
   PRIVATE_KEY= 'Thisisaprivatekey'
-  #SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/db.sqlite3' % APPLICATION_DIR  
   SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://appuser:123@localhost/appdb'
-#app.config['SECURITY_PASSWORD_HASH'] =  "bcrypt"
+
 
 app = Flask(__name__)
 
@@ -56,7 +56,7 @@ app.config['SECRET_KEY']= 'Thisisasecretkey'
 private_key= 'Thisisaprivatekey'
 public_key = 'Thisisapublickey'
 
-#application.config['RESTPLUS_MASK_SWAGGER'] = False
+
 
 # use values from our configuration project
 db=SQLAlchemy(app) #instruct SQLAlchemy how to interact with our database
@@ -103,7 +103,6 @@ class Role(RoleMixin,db.Model):
     __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    #users = db.relationship('User', backref='role')
     description =db.Column(db.String(255))
 
 
@@ -131,17 +130,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
-#@app.before_request
-#def create_user():
+@app.before_request
+def create_user():
     # Create the Roles "admin" and "end-user" -- unless they already exist
-    # Create the Roles "admin" and "end-user" -- unless they already exist
-    #user_datastore.find_or_create_role(name='admin', description='Administrator')
-    #user_datastore.find_or_create_role(name='employee', description='employee')
-    #user_datastore.find_or_create_role(name='citizen', description='citizen')
+    user_datastore.find_or_create_role(name='admin', description='administrator')
+    user_datastore.find_or_create_role(name='employee', description='employee')
+    user_datastore.find_or_create_role(name='citizen', description='citizen')
+    db.session.commit()
 
-    #user_datastore.add_role_to_user('admin@mail.com', 'admin')
-    #user_datastore.add_role_to_user('employee@mail.com', 'employee')
-    #db.session.commit()
+   
     
 
 @app.route("/api/register/", methods =['GET','POST'])
@@ -170,34 +167,29 @@ def login():
         user=User.query.filter_by(username = form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user,remember= form.remember.data)
-            return redirect("http://localhost:5001/api/menu")
+            #print('user=',current_user.username)
+            res = requests.post('http://localhost:5001/api/menu/', json={"user":current_user.username})
+            #return redirect("http://localhost:5001/api/menu")
         #redirect(url_for('profile'))
         else:
-            flash('Login failed!- Please check password')
-
-        
+            flash('Login failed!- Please check password')        
     return render_template('login.html', form=form)
 
-@app.route('/api/profile')
-def profile():
-    return render_template('profile.html')
-
-
-@app.route('/api/home')
+@app.route('/api/home/')
 def home():
   return render_template('home.html')
 
-@app.route("/api/aboutUs")
+@app.route("/api/aboutUs/")
 def about():
     g.user = current_user.username
     print(g.user)
     return render_template("aboutUs.html")
 
-@app.route("/api/terms")
+@app.route("/api/terms/")
 def terms():
   return render_template("terms.html")
 
-@app.route("/api/Privacy")
+@app.route("/api/Privacy/")
 def privacy():
   return render_template("privacy.html")
 

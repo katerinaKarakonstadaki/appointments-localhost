@@ -24,18 +24,10 @@
             
             <strong>
                <div class="formwrapper">
-                    
-          
-                     
-
-                  <form action="http://localhost:5001/api/approve/" method="POST">
-                    
-
-                    
-                     
-                     <table>
+                   <form action="{{ url_for('approve_appointment') }}" method="POST">
+                    <table>
                         <thead>
-                        <tr>
+                        <tr> 
                             <th>select</th>
                             <th>username</th>
                             <th>email</th>

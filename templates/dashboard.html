@@ -1,47 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-   <head>
-      <meta charset="utf-8">
-      <title>Flask Parent Template</title>
-      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-   </head>
-   <body>
-      <header>
-         <div class="container">
-            <h1 class="logo"> Instant Appointment Co.</h1>
-            <strong>
-               <nav>
-                  <ul class="menu">
-                     <li><a href="{{ url_for('home') }}">Home</a></li>
-                     <li><a href="{{ url_for('register') }}">Register</a></li>
-                     <li><a href="{{ url_for('login') }}">LogIn</a></li>
-                     
 
-                     
-                     
-                     
-                  </ul>
-               </nav>
-            </strong>
-         </div>
-      </header>
-      
-      {% block content %}
-      {% endblock %}
-   </body>
-   <footer id="footer">
-    <p> Copyright &copy; 2020 Booking Co.</p>
-    <nav>
-   <ul class="menu">
-                     <li><a href="{{ url_for('home') }}">Home</a></li>
-                     <li><a href="{{ url_for('about') }}">About</a></li>
-                     <li><a href="{{ url_for('terms') }}">Terms of Service</a></li>
-                     <li><a href="{{ url_for('privacy') }}">Privacy</a></li>
-                    
-                     
-                     
-                     
-                  </ul>
-    </nav>
-    </footer>
+<head>
+   <meta charset="utf-8">
+   <title>Instant Appointment Co.</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+   <header>
+      <div class="container">
+         <h1 class="logo"> Instant Appointment Co.</h1>
+         <strong>
+            <nav>
+               <ul class="menu">
+                  <li><a href="{{ url_for('home') }}">Home</a></li>
+                  <li><a href="{{ url_for('register') }}">Register</a></li>
+                  <li><a href="{{ url_for('login') }}">LogIn</a></li>
+               </ul>
+            </nav>
+         </strong>
+      </div>
+   </header>
+
+   {% block content %}
+   {% endblock %}
+</body>
+<footer id="footer">
+   <p> Copyright &copy; 2020 Booking Co.</p>
+   <nav>
+      <ul class="menu">
+         <li><a href="{{ url_for('home') }}">Home</a></li>
+         <li><a href="{{ url_for('about') }}">About</a></li>
+         <li><a href="{{ url_for('terms') }}">Terms of Service</a></li>
+         <li><a href="{{ url_for('privacy') }}">Privacy</a></li>
+      </ul>
+   </nav>
+</footer>
 </html>
