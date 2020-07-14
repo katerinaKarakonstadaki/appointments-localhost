@@ -1,0 +1,10 @@
+db.sqlite3
+bin/
+lib/
+lib64
+share
+include
+*.cfg
+.vscode/
+templates/error/
+

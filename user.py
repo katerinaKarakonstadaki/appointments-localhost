@@ -6,6 +6,7 @@ from flask_sqlalchemy  import SQLAlchemy
 from flask import Flask, render_template, redirect, url_for, request, make_response, g
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm 
+from flask import Response
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_security import Security, SQLAlchemyUserDatastore,current_user,login_required, UserMixin,RoleMixin
@@ -118,13 +119,13 @@ db.create_all()
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=2, max=15)])
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    username = StringField('Username', validators=[InputRequired(), Length(min=2, max=15)])
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)])
     submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=2, max=15)],render_kw={"placeholder": "username"})
+    username = StringField('Username', validators=[InputRequired(), Length(min=2, max=15)],render_kw={"placeholder": "username"})
     password = PasswordField('Password', validators=[InputRequired()])
     remember = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
@@ -139,7 +140,9 @@ def create_user():
     db.session.commit()
 
    
-    
+
+def flash_errors(self):
+    return render_template('flash.html') 
 
 @app.route("/api/register/", methods =['GET','POST'])
 def register():
@@ -162,17 +165,49 @@ def register():
 @app.route("/api/login/", methods =['GET','POST'])
 #@login_required
 def login():
+    error = None
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user=User.query.filter_by(username = form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        error = None
+        if user is None:
+            error = 'Incorrect username.'
+            flash(error)
+            return redirect(url_for('login'))
+            
+        elif not check_password_hash(user.password, form.password.data):
+            error = 'Incorrect password.'
+            flash(error)
+            return redirect(url_for('login'))
+        
+        if error is None:
+            #session.clear()
+            #session['user_id'] = user['id']
             login_user(user,remember= form.remember.data)
+            if current_user.has_roles('citizen'):
+                return redirect("http://localhost:5001/api/citizen")
+            else:
+                if current_user.has_roles('employee'):
+                    return redirect("http://localhost:5001/api/employee")
+            
+
+        
+        #if user and check_password_hash(user.password, form.password.data):
+            #login_user(user,remember= form.remember.data)
+            #if current_user.has_roles('citizen'):
+               # return redirect("http://localhost:5001/api/citizen")
+           # else:
+               # if current_user.has_roles('employee'):
+                  #  return redirect("http://localhost:5001/api/employee")
+            
+                #render_template('flash.html')
+        # return redirect(url_for(''))
             #print('user=',current_user.username)
-            res = requests.post('http://localhost:5001/api/menu/', json={"user":current_user.username})
+            #res = requests.post('http://localhost:5001/api/menu/', json={"user":current_user.username})
             #return redirect("http://localhost:5001/api/menu")
         #redirect(url_for('profile'))
-        else:
-            flash('Login failed!- Please check password')        
+        #else:
+            #flash('Login failed!- Please check password')        
     return render_template('login.html', form=form)
 
 @app.route('/api/home/')
@@ -181,8 +216,6 @@ def home():
 
 @app.route("/api/aboutUs/")
 def about():
-    g.user = current_user.username
-    print(g.user)
     return render_template("aboutUs.html")
 
 @app.route("/api/terms/")

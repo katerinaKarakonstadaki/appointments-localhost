@@ -23,11 +23,11 @@
       </div>
    </header>
 
-   {% block content %}
-   {% endblock %}
+ 
+
 </body>
 <footer id="footer">
-   <p> Copyright &copy; 2020 Booking Co.</p>
+   <p> Copyright &copy; 2020 Instant Appointment Co.</p>
    <nav>
       <ul class="menu">
          <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -38,3 +38,16 @@
    </nav>
 </footer>
 </html>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{%block content%}
+{%endblock%}

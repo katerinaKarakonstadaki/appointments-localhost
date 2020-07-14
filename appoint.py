@@ -29,6 +29,8 @@ from flask_user import roles_required, login_required
 from flask import abort
 from flask_restplus import Namespace, Resource, fields
 import string
+from flask import request
+from flask import Response
 import email
 import uuid
 import jwt
@@ -154,14 +156,23 @@ db.create_all()
 def get_user(ident):
     return User.query.get(int(ident))
 
-@app.route('/api/menu/', methods=['GET','POST'])
-def menu():
-    content = request.json
-    print('content',content['user'])
-    user=User.query.filter_by(username = content['user']).first()
-    login_user(user)
-    print('current_user',current_user)
-    return render_template('application.html')
+@app.route('/api/citizen')
+def citizen():
+    return render_template('citizen.html')
+
+@app.route('/api/employee')
+def employee():
+    return render_template('employee.html')
+
+
+#@app.route('/api/menu/', methods=['GET','POST'])
+#def menu():
+    #content = request.json
+    #print('content',content['user'])
+    #user=User.query.filter_by(username = content['user']).first()
+    #login_user(user)
+    #print('current_user',current_user)
+    #return render_template('application.html')
     
 
 @app.route('/api/add/', methods=['GET','POST'])
@@ -171,43 +182,38 @@ def appointment_create():
     parsed=json.loads(url_api)
     if request.method == 'POST' and form.validate():
         apt=Appointment(created=datetime.utcnow(),
-                    modified=datetime.utcnow(),
-                    username=form.username.data,
-                    email = form.email.data,
-                    start=(form.start.data),
-                    time=form.time.data,
-                    location=form.location.data,
-                    approved=False)
-     
-
-      
-      
+                        modified=datetime.utcnow(),
+                        username=form.username.data,
+                        email = form.email.data,
+                        start=(form.start.data),
+                        time=form.time.data,
+                        location=form.location.data,
+                        approved=False)
+          
         db.session.add(apt)
         db.session.commit()
+    #else:
+        #print(current_user)
+        #return redirect('http://127.0.0.1:5000/api/login')
+        
     return render_template('add.html', form=form, parsed=parsed)
 
 
 
 @app.route('/api/approve/',  methods=['GET','POST'])
 def approve_appointment():
-    print('user=',current_user)
-    if current_user.has_roles('citizen'):
-        flash('You are not allowed!')
-        return render_template('flash.html')
-        # return redirect(url_for(''))
-    else:        
-        conn = psycopg2.connect(dbname="appdb", user="appuser", host=app.config['POSTGRES_SERVER'], password="123")
-        c = conn.cursor()
-        c.execute("SELECT username,email,start,time,location, approved FROM appointment where approved=False")
-        data = c.fetchall()
-        if request.method == 'POST':
-            if request.form['submit-button'] == "Submit":
-                for checkbox in request.form.getlist('check'):
-                    print(checkbox)
-                    sql_query = """UPDATE appointment SET approved=True where email=%s"""
-                    c.execute(sql_query,(checkbox,))
-                    conn.commit()
-                    res = requests.post('http://127.0.0.1:5002/api/notify/', json={"email":checkbox})               
+    conn = psycopg2.connect(dbname="appdb", user="appuser", host=app.config['POSTGRES_SERVER'], password="123")
+    c = conn.cursor()
+    c.execute("SELECT username,email,start,time,location, approved FROM appointment where approved=False")
+    data = c.fetchall()
+    if request.method == 'POST':
+        if request.form['submit-button'] == "Submit":
+            for checkbox in request.form.getlist('check'):
+                #print(checkbox)
+                sql_query = """UPDATE appointment SET approved=True where email=%s"""
+                c.execute(sql_query,(checkbox,))
+                conn.commit()
+                res = requests.post('http://127.0.0.1:5002/api/notify/', json={"email":checkbox})               
     return render_template('approve.html', data=data)
    
 

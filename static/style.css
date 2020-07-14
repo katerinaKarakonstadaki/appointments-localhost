@@ -107,6 +107,16 @@ input[type=text]  {
   resize: vertical;
 }
 
+input[type=password]  {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  resize: vertical;
+}
 
 
 input[type=date]  {
